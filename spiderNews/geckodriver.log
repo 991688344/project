@@ -1,0 +1,8 @@
+1606668840844	geckodriver	INFO	Listening on 127.0.0.1:62799
+1606668843649	mozrunner::runner	INFO	Running command: "D:\\firefox\\firefox.exe" "--marionette" "-headless" "-foreground" "-no-remote" "-profile" "C:\\Users\\hasee\\AppData\\Local\\Temp\\rust_mozprofileBHYnXf"
+*** You are running in headless mode.
+JavaScript error: resource://gre/modules/XULStore.jsm, line 66: Error: Can't find profile directory.
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new Error("", "(unknown module)"))
+1606668845425	Marionette	INFO	Listening on port 62807
+1606668845677	Marionette	WARN	TLS certificate errors will be ignored for this session
+1606668851296	Marionette	INFO	Stopped listening on port 62807

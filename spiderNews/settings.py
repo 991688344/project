@@ -50,9 +50,10 @@ DEFAULT_REQUEST_HEADERS = {
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'spiderNews.middlewares.SpidernewsDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    #'spiderNews.middlewares.SpidernewsDownloaderMiddleware': 543,
+    'spiderNews.middlewares.SeleniumNewsDownloaderMiddleware': 543,
+}
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html
