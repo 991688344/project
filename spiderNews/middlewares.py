@@ -14,6 +14,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+
+
 class SpidernewsSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
@@ -108,22 +110,19 @@ class SpidernewsDownloaderMiddleware:
         spider.logger.info('Spider opened: %s' % spider.name)
 
 ####################################  自定义中间件 ################################
-# setting 优先级 > 541
+# setting 优先级 = 543
 class SeleniumNewsDownloaderMiddleware(object):
-    # 将driver创建在中间件的初始化方法中，适合项目中只有一个爬虫。
-    # 爬虫项目中有多个爬虫文件的话，将driver对象的创建放在每一个爬虫文件中。
     # 在request对象通过中间件的时候，在中间件内部开始使用selenium去请求url，并且会得到url对应的源码，然后再将源代码通过response对象返回，直接交给process_response()进行处理，再交给引擎。过程中相当于后续中间件的process_request()以及Downloader都跳过了。
     def process_request(self, request, spider):
         if spider.name == "spiderBilibiliNews":
             spider.driver.get(request.url)
-
             try:
                 if 'global' in request.url:     # 请求的是总页面,判断列表元素是否加载完成
-                    element = WebDriverWait(spider.driver,5).until(
+                    WebDriverWait(spider.driver,5).until(
                         EC.presence_of_element_located((By.XPATH,'//ul[@class="vd-list mod-2"]'))    # 判断某个元素是否被加到了 dom 树里，并不代表该元素一定可见
                     )
                 else:       # 请求的是具体视频页面,判断标签元素加载完成
-                    element = WebDriverWait(spider.driver,5).until(
+                    WebDriverWait(spider.driver,5).until(
                         EC.presence_of_element_located((By.XPATH,'//div[@id="v_tag"]'))    # 判断某个元素是否被加到了 dom 树里，并不代表该元素一定可见
                     )
                 origin_code = spider.driver.page_source
@@ -134,5 +133,4 @@ class SeleniumNewsDownloaderMiddleware(object):
                 exit(-1)
 
     def process_response(self, request, response, spider):
-        #print(response.url, response.status)
         return response

@@ -9,11 +9,10 @@
 import codecs
 import json
 import os
-import jieba
 import wordcloud
 import numpy
 import PIL.Image as Image
-import matplotlib.pyplot as plt
+import time
 #from scrapy.exporters import JsonItemExporter,JsonLinesItemExporter
 
 class SpidernewsPipeline:
@@ -21,7 +20,6 @@ class SpidernewsPipeline:
         #self.fp=open("BilibiliRank.json",'wb')
         #self.exporter = JsonLinesItemExporter(self.fp,ensure_ascii=False,encoding='utf-8')
         self.json_file = codecs.open('news.json','w+',encoding='UTF-8')
-
 
     def open_spider(self,spider):
         print("[*] 爬虫开始了...")
@@ -32,12 +30,12 @@ class SpidernewsPipeline:
         #self.exporter.export_item(item)
         item_json = json.dumps(dict(item), ensure_ascii=False)
         self.json_file.write('\t' + item_json + ',\n')
-        print(f"[*] from pipline: {item_json}")
+        #print(f"[*] from pipline: {item_json}")
         return item
 
     def close_spider(self,spider):
         # 在结束后，需要对 process_item 最后一次执行输出的 “逗号” 去除
-        # 当前文件指针处于文件尾，我们需要首先使用 SEEK 方法，定位文件尾前的两个字符（一个','(逗号), 一个'\n'(换行符)） 的位置
+        # 当前文件指针处于文件尾，使用 SEEK 方法，定位文件尾前的两个字符（一个','(逗号), 一个'\n'(换行符)） 的位置
         self.json_file.seek(-2, os.SEEK_END)
         # 使用 truncate() 方法，将后面的数据清空
         self.json_file.truncate()
@@ -46,25 +44,31 @@ class SpidernewsPipeline:
         # 关闭文件
         self.json_file.close()
         print("[*] 爬虫结束了...")
+        print("[*] 文件保存在 news.json , images/Rank.png")
         self.plotWordCloud()
 
-
     def plotWordCloud(self):
+        '''
+        绘制词云图
+        '''
         content = ""
         with open(r"news.json","rb") as f:
             data = json.load(f)
         for i in data:
             content = content +  " ".join([t for t in i['tag']])
             content = content + " "
+        content = content.replace("资讯 ","")     # 去除资讯,环球标签
+        content = content.replace("环球 ","")
+        content = content.replace("星海计划 ","")
+        content = content.replace("星海计划","")
         print(f"[*] 所有tag{content}")
         # 生成词云
-        #2.图片遮罩层
-        mask_pic=numpy.array(Image.open("images/cloud.jpg"))
+        mask_pic=numpy.array(Image.open("images/cloud.jpg"))    # 图片遮罩层
         wc = wordcloud.WordCloud(
             font_path='font/FZSTK.TTF',  # 字体路径
             background_color='black',  # 背景颜色
             width=1000,
-            height=600,
+            height=800,
             max_font_size=50,  # 字体大小
             min_font_size=10,
             mask=mask_pic,  # 背景图片
@@ -74,10 +78,3 @@ class SpidernewsPipeline:
         wc.to_file('images/Rank.png')  # 图片保存
         image = wc.to_image()
         image.show()
-        # 5.显示图片
-        #plt.figure('images/Rank')  # 图片显示的名字
-        #plt.imshow(wc)
-        #plt.axis('off')  # 关闭坐标
-        #plt.show()
-
-
