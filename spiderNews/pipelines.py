@@ -61,6 +61,7 @@ class SpidernewsPipeline:
         content = content.replace("环球 ","")
         content = content.replace("星海计划 ","")
         content = content.replace("星海计划","")
+        content = content.replace("11月打卡挑战W4","")
         print(f"[*] 所有tag{content}")
         # 生成词云
         mask_pic=numpy.array(Image.open("images/cloud.jpg"))    # 图片遮罩层
@@ -72,7 +73,8 @@ class SpidernewsPipeline:
             max_font_size=50,  # 字体大小
             min_font_size=10,
             mask=mask_pic,  # 背景图片
-            max_words=1000
+            max_words=1000,
+            scale=10    # 增加分辨率
         )
         wc.generate(content)
         wc.to_file('images/Rank.png')  # 图片保存
