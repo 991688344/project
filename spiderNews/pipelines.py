@@ -74,7 +74,8 @@ class SpidernewsPipeline:
             min_font_size=10,
             mask=mask_pic,  # 背景图片
             max_words=1000,
-            scale=10    # 增加分辨率
+            scale=10,    # 增加分辨率
+            collocations=False  # 防止关键词重复
         )
         wc.generate(content)
         wc.to_file('images/Rank.png')  # 图片保存
