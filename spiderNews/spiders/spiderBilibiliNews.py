@@ -20,7 +20,7 @@ class SpiderbilibilinewsSpider(scrapy.Spider):
         chrome_options = webdriver.ChromeOptions()  # 模拟谷歌浏览器
         prefs = {"profile.managed_default_content_settings.images":2} # 不加载图片
         chrome_options.add_experimental_option("prefs",prefs)
-        chrome_options.add_argument('headless')     # 无头浏览
+        chrome_options.add_argument('--headless')     # 无头浏览
         self.driver = webdriver.Chrome(chrome_options=chrome_options,executable_path='./Pluggins/chromedriver.exe')
 
         # 视频热度排序的URL随时间变化,所以从初始页面动态获取

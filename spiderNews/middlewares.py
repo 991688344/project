@@ -10,7 +10,10 @@ from scrapy.http import HtmlResponse, Response
 # useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 import time
-
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoSuchElementException
 class SpidernewsSpiderMiddleware:
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the spider middleware does not modify the
@@ -114,12 +117,21 @@ class SeleniumNewsDownloaderMiddleware(object):
         if spider.name == "spiderBilibiliNews":
             spider.driver.get(request.url)
 
-            time.sleep(0.2)
-            origin_code = spider.driver.page_source
-            # 将源代码构造成为一个Response对象，并返回。
-            res = HtmlResponse(url=request.url, encoding='utf8', body=origin_code, request=request)
-            # res = Response(url=request.url, body=bytes(origin_code), request=request)
-            return res
+            try:
+                if 'global' in request.url:     # 请求的是总页面,判断列表元素是否加载完成
+                    element = WebDriverWait(spider.driver,5).until(
+                        EC.presence_of_element_located((By.XPATH,'//ul[@class="vd-list mod-2"]'))    # 判断某个元素是否被加到了 dom 树里，并不代表该元素一定可见
+                    )
+                else:       # 请求的是具体视频页面,判断标签元素加载完成
+                    element = WebDriverWait(spider.driver,5).until(
+                        EC.presence_of_element_located((By.XPATH,'//div[@id="v_tag"]'))    # 判断某个元素是否被加到了 dom 树里，并不代表该元素一定可见
+                    )
+                origin_code = spider.driver.page_source
+                res = HtmlResponse(url=request.url, encoding='utf8', body=origin_code, request=request)     # 将源代码构造成为一个Response对象，并返回。
+                return res
+            except NoSuchElementException as e:
+                print(f"[-] No Such element ,check Network {e}")
+                exit(-1)
 
     def process_response(self, request, response, spider):
         #print(response.url, response.status)
