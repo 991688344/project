@@ -68,7 +68,9 @@ class SpiderrankPipeline:
             max_font_size=50,  # 字体大小
             min_font_size=10,
             mask=mask_pic,  # 背景图片
-            max_words=1000
+            max_words=1000,
+            #scale=3,    # 增加分辨率
+            collocations=False  # 防止关键词重复
         )
         wc.generate(content)
         wc.to_file('images/Rank.png')  # 图片保存
