@@ -8,6 +8,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 import time
+import platform
 
 
 class SpiderbilibilinewsSpider(scrapy.Spider):
@@ -24,7 +25,12 @@ class SpiderbilibilinewsSpider(scrapy.Spider):
         chrome_options.add_experimental_option("prefs",prefs)
         chrome_options.add_argument('--headless')     # 无头浏览
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])   # 不输出日志
-        self.driver = webdriver.Chrome(chrome_options=chrome_options,executable_path='./Pluggins/chromedriver.exe')
+
+        if(platform.system() == 'Windows'):
+            self.driver = webdriver.Chrome(chrome_options=chrome_options,executable_path='./Pluggins/chromedriver.exe')
+        elif (platform.system() == 'Linux'):
+            self.driver = webdriver.Chrome(chrome_options=chrome_options,executable_path='./Pluggins/chromedriver')
+
         # 视频热度排序的URL随时间变化,所以从初始页面动态获取
         r = requests.get('https://www.bilibili.com/v/information/global')
         html = etree.HTML(r.text)
@@ -48,7 +54,7 @@ class SpiderbilibilinewsSpider(scrapy.Spider):
             realURL = "https://"+i[2:]
             print(f"[*] realURL {realURL}")
             yield scrapy.Request(realURL,callback=self.getTag_parse,dont_filter=True)
-        
+
         # 如果有下一页继续爬取下一页
         try:
             #print(f"[*] Start URL : {self.start_urls}")
