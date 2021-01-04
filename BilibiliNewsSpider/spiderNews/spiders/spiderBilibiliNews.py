@@ -25,6 +25,7 @@ class SpiderbilibilinewsSpider(scrapy.Spider):
         chrome_options.add_experimental_option("prefs",prefs)
         chrome_options.add_argument('--headless')     # 无头浏览
         chrome_options.add_experimental_option('excludeSwitches', ['enable-logging'])   # 不输出日志
+        chrome_options.add_argument('--no-sandbox')#解决DevToolsActivePort文件不存在的报错
 
         if(platform.system() == 'Windows'):
             self.driver = webdriver.Chrome(chrome_options=chrome_options,executable_path='./Pluggins/chromedriver.exe')
